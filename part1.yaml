@@ -1,0 +1,228 @@
+openapi: 3.0.3
+info:
+  title: STD23024 - FinalTD
+  version: '1.0.2'
+servers:
+  - url: https://localhost.std23024.com
+
+paths:
+  /competitions:
+    post:
+      summary: Create a new competition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Competition'
+      responses:
+        '201':
+          description: New competition add successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Competition'
+    get:
+      summary: Retrieve a list of competitions
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: A list of competitions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Competition'
+
+  /teams:
+    post:
+      summary: Create a new team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '201':
+          description: new team add successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Team'
+    get:
+      summary: Retrieve a list of teams
+      parameters:
+        - in: query
+          name: teamName
+          schema:
+            type: string
+          description: Filter teams by name
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: A list of teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Team'
+
+  /teams/{teamId}/competitions:
+    post:
+      summary: Associate a team with competitions
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Competition'
+      responses:
+        '200':
+          description: Competitions associated successfully
+
+  /teams/{teamId}/players:
+    post:
+      summary: Associate players with a team
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Player'
+      responses:
+        '200':
+          description: Players associated successfully
+    get:
+      summary: Retrieve a list of players for a specific team
+      parameters:
+        - in: path
+          name: teamId
+          required: true
+          schema:
+            type: string
+          description: ID of the team
+        - in: query
+          name: playerName
+          schema:
+            type: string
+          description: Filter players by name
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: true
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: A list of players for the specified team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+
+  /players:
+    post:
+      summary: Create a new player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+      responses:
+        '201':
+          description: New player add successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+
+components:
+  schemas:
+    Competition:
+      type: object
+      properties:
+        name:
+          type: string
+          example: LIGA
+        location:
+          type: string
+          example: ESPAGNE
+
+    Team:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Real Madrid
+        slogan:
+          type: string
+          example: Hala Madrid
+        competitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Competition'
+        players:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+
+    Player:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Lionel Messi
+        number:
+          type: integer
+          example: 10
+        foot:
+          type: string
+          enum:
+            - Left
+            - Right
+          example: Left
